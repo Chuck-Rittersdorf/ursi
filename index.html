@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, notranslate, noimageindex">
+    <title>Art & Wisdom Viewer</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            background-color: #e6f3ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            padding-bottom: 80px; /* Space for the bottom bar */
+        }
+
+        .wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+            background-color: rgba(173, 216, 230, 0.3);
+            border-radius: 15px;
+            max-width: 1200px;
+            width: 100%;
+            align-items: flex-start;
+        }
+
+        .box {
+            flex: 1;
+            min-width: 280px;
+            max-width: 600px;
+            background-color: rgba(200, 220, 240, 0.4);
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            min-height: 300px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            transition: min-height 0.25s ease-out;
+        }
+
+        .box.content-shown {
+            min-height: 1px;
+        }
+
+        .media-item-container img,
+        .media-item-container iframe {
+            cursor: pointer;
+        }
+        .media-title a {
+            cursor: pointer;
+        }
+
+        .box-content {
+            position: relative; width: 100%; height: auto; box-sizing: border-box;
+            background-color: rgba(255, 255, 255, 0.97);
+            border-radius: 10px; color: #2c3e50;
+            opacity: 1; transform: scale(1) translateY(0); visibility: visible;
+            max-height: none; padding: 0; overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+
+        .media-view, .placeholder-content-view {
+            width: 100%; box-sizing: border-box; padding: 20px;
+            opacity: 0; max-height: 0; overflow: hidden;
+            transform: translateY(10px);
+            transition: opacity 0.25s ease-out,
+                        max-height 0.3s ease-out,
+                        transform 0.25s ease-out;
+        }
+        .media-view.active-internal-view,
+        .placeholder-content-view.active-internal-view {
+            opacity: 1; max-height: 4000px; /* Increased max-height */
+            transform: translateY(0);
+        }
+
+        .placeholder-content-view h2 {
+            margin-top: 0;
+            margin-bottom: 0.8em;
+            color: #1a2533;
+            font-size: 1.2em;
+        }
+
+        .media-item-container {
+            width: 100%; margin-bottom: 15px; display: flex;
+            justify-content: center; align-items: center;
+        }
+        .media-item-container img,
+        .media-item-container iframe {
+            max-width: 100%; max-height: 65vh;
+            height: auto;
+            border-radius: 5px; border: none; display: block;
+        }
+        .media-title {
+            font-size: 1.0em; /* Adjusted for potentially longer captions */
+            margin: 0; font-weight: bold; text-align: center;
+            line-height: 1.4; /* Adjusted for multi-line */
+        }
+        .media-title a { color: #0056b3; text-decoration: none; }
+        .media-title a:hover { text-decoration: underline; }
+        .media-loading, .media-error {
+            text-align: center; padding: 20px; font-style: italic; color: #777;
+        }
+
+        .tao-text-section {
+            white-space: pre-wrap;
+            margin-bottom: 1em;
+            line-height: 1.6;
+            font-size: 0.95em;
+            text-align: left;
+        }
+        .tao-text-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .tao-attribution {
+            font-size: 0.75em;
+            color: #555;
+            text-align: right;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #eaeaea;
+        }
+        .tao-attribution a {
+            color: #0056b3;
+            text-decoration: none;
+        }
+        .tao-attribution a:hover {
+            text-decoration: underline;
+        }
+
+        .bottom-logo-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: rgba(40, 60, 100, 0.85); padding: 10px 15px; border-radius: 12px; box-shadow: 0 -2px 10px rgba(0,0,0,0.2); z-index: 1000; display: flex; gap: 12px; align-items: center; }
+        .bottom-logo-bar a { display: inline-flex; align-items: center; justify-content: center; transition: transform 0.2s ease; padding: 3px; }
+        .bottom-logo-bar a:hover { transform: scale(1.15); }
+        .bottom-logo-bar img { height: 28px; width: auto; display: block; }
+        .bottom-logo-bar span.img-alt-text { font-size: 10px; color: #fff; padding: 5px; display: inline-block; border: 1px solid #fff; border-radius: 3px; line-height: 1; }
+
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="box" id="box1" onclick="handleMediaBoxClick(event)">
+            <div class="box-content">
+                <div class="media-view active-internal-view">
+                    <div class="media-item-container">
+                        <div class="media-loading">Loading Rijksmuseum Art...</div>
+                    </div>
+                    <h3 class="media-title"><a href="#" target="_blank" rel="noopener noreferrer">Rijksmuseum Art Title</a></h3>
+                </div>
+                <div class="placeholder-content-view">
+                    <h2 id="box1-tao-chapter-title">Tao Te Ching</h2>
+                    <div id="box1-tao-text" class="tao-text-section"></div>
+                    <div class="tao-attribution">
+                        Translation by <a href="https://dereklin.com" target="_blank" rel="noopener noreferrer">Derek Lin</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="box" id="box2" onclick="handleMediaBoxClick(event)">
+            <div class="box-content">
+                <div class="media-view active-internal-view">
+                    <div class="media-item-container">
+                        <div class="media-loading">Loading Metropolitan Museum Art...</div>
+                    </div>
+                    <h3 class="media-title">
+                        <a href="#" target="_blank" rel="noopener noreferrer">Metropolitan Museum Art Title</a>
+                    </h3>
+                </div>
+                <div class="placeholder-content-view">
+                    <h2 id="box2-tao-placeholder-title">Wisdom from the Tao</h2> <div id="box2-tao-annotation" class="tao-text-section"></div>
+                    <div id="box2-tao-lifelesson" class="tao-text-section"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-logo-bar">
+        <a href="https://mail.google.com/" target="_blank" rel="noopener noreferrer" title="Gmail"><img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" alt="Gmail Logo" onerror="this.outerHTML = '<span class=\'img-alt-text\'>' + this.alt + '</span>'"></a>
+        <a href="https://calendar.google.com/" target="_blank" rel="noopener noreferrer" title="Google Calendar"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Google_Calendar_icon_%282020%29.svg" alt="Google Calendar Logo" onerror="this.outerHTML = '<span class=\'img-alt-text\'>' + this.alt + '</span>'"></a>
+        <a href="https://tasks.google.com/" target="_blank" rel="noopener noreferrer" title="Google Tasks"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Google_Tasks_2021.svg" alt="Google Tasks Logo" onerror="this.outerHTML = '<span class=\'img-alt-text\'>' + this.alt + '</span>'"></a>
+        <a href="https://keep.google.com/" target="_blank" rel="noopener noreferrer" title="Google Keep"><img src="https://upload.wikimedia.org/wikipedia/commons/c/cb/Google_Keep_2020_Logo.svg" alt="Google Keep Logo" onerror="this.outerHTML = '<span class=\'img-alt-text\'>' + this.alt + '</span>'"></a>
+        <a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer" title="Google Gemini"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8f/Google-gemini-icon.svg" alt="Google Gemini Logo" onerror="this.outerHTML = '<span class=\'img-alt-text\'>' + this.alt + '</span>'"></a>
+        <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" title="Google Maps"><img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Maps_icon_%282020%29.svg" alt="Google Maps Logo" onerror="this.outerHTML = '<span class=\'img-alt-text\'>' + this.alt + '</span>'"></a>
+        <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" title="YouTube"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube Logo" onerror="this.outerHTML = '<span class=\'img-alt-text\'>' + this.alt + '</span>'"></a>
+    </div>
+
+    <script src="tao-data.js"></script>
+    <script>
+        const nasaApiKey = 'NyyGoLiGKX7pg76t9ehi4L8n0MHQuHw8xV6QHLNm'; // Kept as per original file, though APOD not actively shown
+        const rijksApiKey = 'LCaM9ZlM'; // Your Rijksmuseum API Key
+        let randomTaoChapterData = null;
+
+        function activateView(viewElement, boxElement) {
+            requestAnimationFrame(() => {
+                const currentScrollHeight = viewElement.scrollHeight;
+                viewElement.style.maxHeight = currentScrollHeight + 'px';
+
+                if (boxElement && !boxElement.classList.contains('content-shown')) {
+                    boxElement.classList.add('content-shown');
+                }
+            });
+        }
+
+        // --- APOD Functions (Original, kept for completeness if needed elsewhere) ---
+        async function fetchAPOD(boxElement) {
+            const boxId = boxElement.id;
+            const mediaView = boxElement.querySelector('.media-view');
+            const mediaContainer = mediaView.querySelector('.media-item-container');
+            const titleLink = mediaView.querySelector('.media-title a');
+
+            if (!mediaContainer || !titleLink ) {
+                mediaContainer.innerHTML = `<div class="media-error">Page Error: Display elements not found.</div>`;
+                activateView(mediaView, boxElement);
+                return;
+            }
+            mediaContainer.innerHTML = '<div class="media-loading">Loading APOD...</div>';
+            titleLink.textContent = 'Loading APOD title...';
+            titleLink.href = '#';
+            if (mediaView.classList.contains('active-internal-view')) {
+                 activateView(mediaView, boxElement);
+            }
+            let url = `https://api.nasa.gov/planetary/apod?api_key=${nasaApiKey}`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.msg || `HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                displayAPODContent(boxElement, data);
+            } catch (error) {
+                console.error("Error fetching APOD for " + boxId + ":", error);
+                mediaContainer.innerHTML = `<div class="media-error">Failed to load APOD: ${error.message}</div>`;
+                if (mediaView.classList.contains('active-internal-view')) {
+                    activateView(mediaView, boxElement);
+                }
+            }
+        }
+
+        function displayAPODContent(boxElement, data) {
+            const mediaView = boxElement.querySelector('.media-view');
+            const mediaContainer = mediaView.querySelector('.media-item-container');
+            const titleLink = mediaView.querySelector('.media-title a');
+            mediaContainer.innerHTML = '';
+            const updateHeights = () => {
+                if (mediaView.classList.contains('active-internal-view')) {
+                    activateView(mediaView, boxElement);
+                }
+            };
+            if (data.media_type === 'image') {
+                const img = document.createElement('img');
+                img.src = data.url;
+                img.alt = data.title;
+                img.onload = updateHeights;
+                img.onerror = () => {
+                    mediaContainer.innerHTML = `<div class="media-error">APOD Image failed to load.</div>`;
+                    updateHeights();
+                };
+                mediaContainer.appendChild(img);
+            } else if (data.media_type === 'video') {
+                const iframe = document.createElement('iframe');
+                iframe.src = data.url;
+                iframe.title = data.title;
+                iframe.allowFullscreen = true;
+                iframe.onload = updateHeights;
+                mediaContainer.appendChild(iframe);
+                setTimeout(updateHeights, 100);
+            } else {
+                mediaContainer.textContent = 'Unsupported APOD media type: ' + data.media_type;
+                updateHeights();
+            }
+            titleLink.textContent = data.title || "Untitled APOD";
+            if (data.date) {
+                const dateParts = data.date.split('-');
+                const apodPageDate = dateParts[0].substring(2) + dateParts[1] + dateParts[2];
+                titleLink.href = `https://apod.nasa.gov/apod/ap${apodPageDate}.html`;
+            } else {
+                titleLink.href = data.hdurl || data.url || '#';
+            }
+            if(data.media_type !== 'image'){ updateHeights(); }
+        }
+
+        // --- Rijksmuseum Functions (for Box 1) ---
+        async function fetchRijksmuseumArt(boxElement) {
+            const boxId = boxElement.id;
+            const mediaView = boxElement.querySelector('.media-view');
+            const mediaContainer = mediaView.querySelector('.media-item-container');
+            const titleLink = mediaView.querySelector('.media-title a');
+
+            if (!mediaContainer || !titleLink) {
+                if (mediaContainer) mediaContainer.innerHTML = `<div class="media-error">Page Error: Display elements not found for Rijksmuseum.</div>`;
+                else console.error("Critical Page Error: mediaContainer not found for Rijksmuseum in " + boxId);
+                if (mediaView) activateView(mediaView, boxElement);
+                else if (boxElement) boxElement.classList.add('content-shown');
+                return;
+            }
+            mediaContainer.innerHTML = '<div class="media-loading">Loading Rijksmuseum Art...</div>';
+            titleLink.textContent = 'Loading art data...';
+            titleLink.href = '#';
+            if (mediaView.classList.contains('active-internal-view')) {
+                activateView(mediaView, boxElement);
+            }
+            const collectionUrl = `https://www.rijksmuseum.nl/api/en/collection?key=${rijksApiKey}&format=json&imgonly=true&toppieces=true&ps=100`;
+            try {
+                const responseCollection = await fetch(collectionUrl);
+                if (!responseCollection.ok) throw new Error(`Rijksmuseum API (collection) error! status: ${responseCollection.status}`);
+                const dataCollection = await responseCollection.json();
+                if (!dataCollection.artObjects || dataCollection.artObjects.length === 0) throw new Error('No art objects found in Rijksmuseum top pieces.');
+                const randomIndex = Math.floor(Math.random() * dataCollection.artObjects.length);
+                const randomArtObjectSummary = dataCollection.artObjects[randomIndex];
+                const objectNumber = randomArtObjectSummary.objectNumber;
+                const detailUrl = `https://www.rijksmuseum.nl/api/en/collection/${objectNumber}?key=${rijksApiKey}&format=json`;
+                const responseDetail = await fetch(detailUrl);
+                if (!responseDetail.ok) throw new Error(`Rijksmuseum API (detail for ${objectNumber}) error! status: ${responseDetail.status}`);
+                const dataDetail = await responseDetail.json();
+                if (!dataDetail.artObject) throw new Error('Could not retrieve art object details from Rijksmuseum.');
+                displayRijksmuseumArt(boxElement, dataDetail.artObject);
+            } catch (error) {
+                console.error("Error fetching Rijksmuseum art for " + boxId + ":", error);
+                mediaContainer.innerHTML = `<div class="media-error">Failed to load Rijksmuseum art: ${error.message}</div>`;
+                titleLink.textContent = 'Failed to load title';
+                if (mediaView.classList.contains('active-internal-view')) {
+                    activateView(mediaView, boxElement);
+                }
+            }
+        }
+
+        function displayRijksmuseumArt(boxElement, artData) {
+            const mediaView = boxElement.querySelector('.media-view');
+            const mediaContainer = mediaView.querySelector('.media-item-container');
+            const titleLink = mediaView.querySelector('.media-title a');
+            // console.log("Full artData for Rijksmuseum:", artData); // For debugging
+            mediaContainer.innerHTML = '';
+            const updateHeights = () => {
+                if (mediaView.classList.contains('active-internal-view')) {
+                    activateView(mediaView, boxElement);
+                }
+            };
+            let imageUrlForDisplay = null;
+            if (artData.webImage && artData.webImage.url) {
+                imageUrlForDisplay = artData.webImage.url;
+                const img = document.createElement('img');
+                img.src = imageUrlForDisplay;
+                img.alt = artData.title || "Rijksmuseum Art";
+                img.onload = updateHeights;
+                img.onerror = () => {
+                    mediaContainer.innerHTML = `<div class="media-error">Rijksmuseum image failed to load.</div>`;
+                    updateHeights();
+                };
+                mediaContainer.appendChild(img);
+            } else {
+                mediaContainer.innerHTML = `<div class="media-error">Rijksmuseum image not available.</div>`;
+                updateHeights();
+            }
+            let caption = artData.title || "Untitled Artwork";
+            const year = artData.dating && artData.dating.presentingDate ? artData.dating.presentingDate : null;
+            if (year) caption += ` (${year})`;
+            if (artData.materials && Array.isArray(artData.materials) && artData.materials.length > 0) {
+                caption += `\nMaterials: ${artData.materials.join(', ')}`;
+            }
+            if (artData.techniques && Array.isArray(artData.techniques) && artData.techniques.length > 0) {
+                caption += `\nTechniques: ${artData.techniques.join(', ')}`;
+            }
+            const artist = artData.principalMakers && artData.principalMakers.length > 0 ? artData.principalMakers[0] : null;
+            if (artist && artist.name) {
+                caption += `\n${artist.name}`;
+                const birthYearStr = artist.dateOfBirth ? String(artist.dateOfBirth).substring(0, 4) : null;
+                const deathYearStr = artist.dateOfDeath ? String(artist.dateOfDeath).substring(0, 4) : null;
+                if (birthYearStr && deathYearStr) caption += ` (${birthYearStr}–${deathYearStr})`;
+                else if (birthYearStr) caption += ` (b. ${birthYearStr})`;
+                else if (deathYearStr) caption += ` (d. ${deathYearStr})`;
+            }
+            titleLink.style.whiteSpace = 'pre-line';
+            titleLink.textContent = caption;
+            const imageLinkForCaption = imageUrlForDisplay || '#';
+            titleLink.href = imageLinkForCaption;
+            if (imageLinkForCaption === '#') {
+                titleLink.target = '';
+                titleLink.removeAttribute('rel');
+            } else {
+                titleLink.target = '_blank';
+                titleLink.rel = 'noopener noreferrer';
+            }
+            if (!imageUrlForDisplay) updateHeights();
+        }
+
+        // --- Wikimedia POTD Functions (Original, kept for completeness) ---
+        async function fetchWikimediaPOTD(boxElement) { /* ... content from original file ... */ }
+        function displayWikimediaPOTDContent(boxElement, pageData, globalUsageArray) { /* ... content from original file ... */ }
+
+
+        // --- Metropolitan Museum of Art Functions (for Box 2) ---
+        async function fetchMetArt(boxElement) {
+            const boxId = boxElement.id;
+            const mediaView = boxElement.querySelector('.media-view');
+            const mediaContainer = mediaView.querySelector('.media-item-container');
+            const titleLink = mediaView.querySelector('.media-title a');
+
+            if (!mediaContainer || !titleLink) {
+                if (mediaContainer) mediaContainer.innerHTML = `<div class="media-error">Page Error: Display elements not found for Met Art.</div>`;
+                else console.error("Critical Page Error: mediaContainer not found for Met Art in " + boxId);
+                if (mediaView) activateView(mediaView, boxElement);
+                else if (boxElement) boxElement.classList.add('content-shown');
+                return;
+            }
+            mediaContainer.innerHTML = '<div class="media-loading">Loading Metropolitan Museum Art...</div>';
+            titleLink.textContent = 'Loading art data...';
+            titleLink.href = '#';
+            if (mediaView.classList.contains('active-internal-view')) {
+                activateView(mediaView, boxElement);
+            }
+            const searchUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?isHighlight=true&hasImages=true&q=a`;
+            try {
+                const responseSearch = await fetch(searchUrl);
+                if (!responseSearch.ok) throw new Error(`Met API (search) error! status: ${responseSearch.status}`);
+                const dataSearch = await responseSearch.json();
+                if (!dataSearch.objectIDs || dataSearch.objectIDs.length === 0) throw new Error('No art objects found from Met API search.');
+                const randomIndex = Math.floor(Math.random() * dataSearch.objectIDs.length);
+                const randomObjectID = dataSearch.objectIDs[randomIndex];
+                const detailUrl = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${randomObjectID}`;
+                const responseDetail = await fetch(detailUrl);
+                if (!responseDetail.ok) throw new Error(`Met API (detail for ${randomObjectID}) error! status: ${responseDetail.status}`);
+                const artData = await responseDetail.json();
+                if (!artData) throw new Error('Could not retrieve art object details from Met API.');
+                displayMetArt(boxElement, artData);
+            } catch (error) {
+                console.error("Error fetching Metropolitan Museum art for " + boxId + ":", error);
+                mediaContainer.innerHTML = `<div class="media-error">Failed to load Met art: ${error.message}</div>`;
+                titleLink.textContent = 'Failed to load title';
+                if (mediaView.classList.contains('active-internal-view')) {
+                    activateView(mediaView, boxElement);
+                }
+            }
+        }
+
+        function displayMetArt(boxElement, artData) {
+            const mediaView = boxElement.querySelector('.media-view');
+            const mediaContainer = mediaView.querySelector('.media-item-container');
+            const titleLink = mediaView.querySelector('.media-title a');
+            // console.log("Full artData for Met Museum:", artData); // For debugging
+            mediaContainer.innerHTML = '';
+            const updateHeights = () => {
+                if (mediaView.classList.contains('active-internal-view')) {
+                    activateView(mediaView, boxElement);
+                }
+            };
+            let imageUrlForDisplay = null;
+            if (artData.primaryImage && artData.primaryImage.length > 0) {
+                imageUrlForDisplay = artData.primaryImage;
+                const img = document.createElement('img');
+                img.src = imageUrlForDisplay;
+                img.alt = artData.title || "Metropolitan Museum Art";
+                img.onload = updateHeights;
+                img.onerror = () => {
+                    mediaContainer.innerHTML = `<div class="media-error">Met Museum image failed to load.</div>`;
+                    updateHeights();
+                };
+                mediaContainer.appendChild(img);
+            } else {
+                mediaContainer.innerHTML = `<div class="media-error">Met Museum image not available.</div>`;
+                updateHeights();
+            }
+            let caption = artData.title || "Untitled Artwork";
+            let yearString = artData.objectDate || "";
+            if (!yearString && artData.objectBeginDate) {
+                yearString = String(artData.objectBeginDate);
+                if (artData.objectEndDate && artData.objectBeginDate !== artData.objectEndDate) {
+                    yearString += `–${artData.objectEndDate}`;
+                }
+            }
+            if (yearString) caption += ` (${yearString})`;
+            if (artData.medium && artData.medium.length > 0) {
+                caption += `\n${artData.medium}`;
+            }
+            let artistName = artData.artistDisplayName || "";
+            let artistBioForYears = artData.artistDisplayBio || "";
+            let artistBeginDate = artData.artistBeginDate ? String(artData.artistBeginDate) : null;
+            let artistEndDate = artData.artistEndDate ? String(artData.artistEndDate) : null;
+            if (!artistName && artData.constituents && artData.constituents.length > 0) {
+                const primaryArtist = artData.constituents.find(c => c.role === "Artist" || c.role === "Maker"); // Broaden role check
+                if (primaryArtist) artistName = primaryArtist.name;
+            }
+            if (artistName) {
+                caption += `\n${artistName}`;
+                if (artistBeginDate && artistEndDate) {
+                    caption += ` (${artistBeginDate}–${artistEndDate})`;
+                } else if (artistBeginDate) {
+                    caption += ` (b. ${artistBeginDate})`;
+                } else if (artistEndDate) {
+                    caption += ` (d. ${artistEndDate})`;
+                } else if (artistBioForYears) {
+                    const yearMatch = artistBioForYears.match(/\b(\d{4})\b(?:[^\d,]*(?:–|-)\s*(\d{4}))?\b/); // Improved regex for YYYY-YYYY or YYYY
+                    if (yearMatch) {
+                        const birth = yearMatch[1];
+                        const death = yearMatch[2];
+                        if (birth && death) caption += ` (${birth}–${death})`;
+                        else if (birth) caption += ` (b. ${birth})`;
+                    }
+                }
+            }
+            titleLink.style.whiteSpace = 'pre-line';
+            titleLink.textContent = caption;
+            const imageLinkForCaption = imageUrlForDisplay || '#';
+            titleLink.href = imageLinkForCaption;
+            if (imageLinkForCaption === '#') {
+                titleLink.target = '';
+                titleLink.removeAttribute('rel');
+            } else {
+                titleLink.target = '_blank';
+                titleLink.rel = 'noopener noreferrer';
+            }
+            if (!imageUrlForDisplay) updateHeights();
+        }
+
+        // --- Generic Click Handler & DOMContentLoaded ---
+        function handleMediaBoxClick(event) {
+            const box = event.currentTarget;
+            const mediaView = box.querySelector('.media-view');
+            const placeholderView = box.querySelector('.placeholder-content-view');
+            const clickedOnTitleLink = event.target.closest('.media-title a');
+
+            if (clickedOnTitleLink) {
+                // Allow link navigation
+                return;
+            }
+
+            const isPlaceholderActive = placeholderView.classList.contains('active-internal-view');
+            const clickedOnMediaItem = event.target.closest('.media-item-container img, .media-item-container iframe');
+            const clickedOnPlaceholderContent = isPlaceholderActive && placeholderView.contains(event.target) && !event.target.closest('a'); // Don't toggle if clicking a link in placeholder
+
+            if (clickedOnPlaceholderContent || (!isPlaceholderActive && clickedOnMediaItem)) {
+                box.classList.add('content-shown');
+                if (isPlaceholderActive) {
+                    placeholderView.classList.remove('active-internal-view');
+                    placeholderView.style.maxHeight = '0px';
+                    mediaView.classList.add('active-internal-view');
+                    activateView(mediaView, box);
+                } else {
+                    mediaView.classList.remove('active-internal-view');
+                    mediaView.style.maxHeight = '0px';
+                    if (randomTaoChapterData) {
+                        if (box.id === 'box1') {
+                            const titleEl = placeholderView.querySelector('#box1-tao-chapter-title');
+                            const textEl = placeholderView.querySelector('#box1-tao-text');
+                            if (titleEl) titleEl.textContent = `Tao Te Ching ${randomTaoChapterData.chapter}`;
+                            if (textEl) textEl.textContent = randomTaoChapterData.text;
+                        } else if (box.id === 'box2') {
+                            const titleEl = placeholderView.querySelector('#box2-tao-placeholder-title'); // Ensure this ID exists if you change title
+                            const annotationEl = placeholderView.querySelector('#box2-tao-annotation');
+                            const lifeLessonEl = placeholderView.querySelector('#box2-tao-lifelesson');
+                            if(titleEl && randomTaoChapterData.chapter) titleEl.textContent = ``;
+                            else if(titleEl) titleEl.textContent = "Wisdom from the Tao";
+
+                            if (annotationEl) annotationEl.textContent = randomTaoChapterData.annotation;
+                            if (lifeLessonEl) lifeLessonEl.textContent = randomTaoChapterData.lifeLesson;
+                        }
+                    } else {
+                         placeholderView.innerHTML = '<h2>Error</h2><p>Tao Te Ching data not loaded.</p>';
+                    }
+                    placeholderView.classList.add('active-internal-view');
+                    activateView(placeholderView, box);
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof taoTeChingData !== 'undefined' && taoTeChingData.length > 0) {
+                const randomIndex = Math.floor(Math.random() * taoTeChingData.length);
+                randomTaoChapterData = taoTeChingData[randomIndex];
+            } else {
+                console.error("taoTeChingData is not available or empty. Make sure tao-data.js is loaded and populated correctly.");
+            }
+
+            const box1 = document.getElementById('box1');
+            const box1MediaView = box1.querySelector('.media-view');
+            box1.classList.add('content-shown');
+            box1MediaView.classList.add('active-internal-view');
+            fetchRijksmuseumArt(box1);
+
+            const box2 = document.getElementById('box2');
+            const box2MediaView = box2.querySelector('.media-view');
+            box2.classList.add('content-shown');
+            box2MediaView.classList.add('active-internal-view');
+            fetchMetArt(box2);
+        });
+    </script>
+</body>
+</html>
