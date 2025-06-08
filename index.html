@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, notranslate, noimageindex">
-    <title></title>
+    <title>Art & Wisdom Viewer</title>
     <style>
         body {
             font-family: sans-serif;
@@ -156,11 +156,7 @@
                     <h3 class="media-title"><a href="#" target="_blank" rel="noopener noreferrer">Rijksmuseum Art Title</a></h3>
                 </div>
                 <div class="placeholder-content-view">
-                    <h2 id="box1-tao-chapter-title">Tao Te Ching</h2>
-                    <div id="box1-tao-text" class="tao-text-section"></div>
-                    <div class="tao-attribution">
-                        Translation by <a href="https://dereklin.com" target="_blank" rel="noopener noreferrer">Derek Lin</a>
-                    </div>
+                    <iframe frameborder="0" scrolling="no" class="weerplazaWidget" src="https://www.weerplaza.nl/weerwidgets/regenradar/?SXNGdWxsV2lkdGg9ZmFsc2UmSXNIRD10cnVlJlpvb21MZXZlbD03" style="width: 100% !important; max-width: 500px; height: 698px !important; padding: 10px; border: 1px solid rgb(244, 244, 244) !important; box-sizing: border-box !important;"></iframe>
                 </div>
             </div>
         </div>
@@ -176,28 +172,27 @@
                     </h3>
                 </div>
                 <div class="placeholder-content-view">
-                    <h2 id="box2-tao-placeholder-title">Wisdom from the Tao</h2> <div id="box2-tao-annotation" class="tao-text-section"></div>
-                    <div id="box2-tao-lifelesson" class="tao-text-section"></div>
+                    <iframe frameborder="0" scrolling="no" class="weerplazaWidget" src="https://www.weerplaza.nl/weerwidgets/locatie/10728/?" style="width: 100% !important; max-width: 370px !important; height: 350px !important; padding: 10px; border: 1px solid rgb(244, 244, 244) !important; box-sizing: border-box !important;"></iframe>
+                    <iframe frameborder="0" scrolling="no" class="weerplazaWidget" src="https://www.weerplaza.nl/weerwidgets/verwachting/10728/?" style="width: 100% !important; max-width: 370px !important; height: 350px !important; padding: 10px; border: 1px solid rgb(244, 244, 244) !important; box-sizing: border-box !important;"></iframe>
                 </div>
             </div>
         </div>
     </div>
 
+    <!--
     <div class="bottom-logo-bar">
         <a href="https://mail.google.com/" target="_blank" rel="noopener noreferrer" title="Gmail"><img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" alt="Gmail Logo" onerror="this.outerHTML = '<span class=\'img-alt-text\'>' + this.alt + '</span>'"></a>
         <a href="https://calendar.google.com/" target="_blank" rel="noopener noreferrer" title="Google Calendar"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Google_Calendar_icon_%282020%29.svg" alt="Google Calendar Logo" onerror="this.outerHTML = '<span class=\'img-alt-text\'>' + this.alt + '</span>'"></a>
         <a href="https://tasks.google.com/" target="_blank" rel="noopener noreferrer" title="Google Tasks"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Google_Tasks_2021.svg" alt="Google Tasks Logo" onerror="this.outerHTML = '<span class=\'img-alt-text\'>' + this.alt + '</span>'"></a>
         <a href="https://keep.google.com/" target="_blank" rel="noopener noreferrer" title="Google Keep"><img src="https://upload.wikimedia.org/wikipedia/commons/c/cb/Google_Keep_2020_Logo.svg" alt="Google Keep Logo" onerror="this.outerHTML = '<span class=\'img-alt-text\'>' + this.alt + '</span>'"></a>
         <a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer" title="Google Gemini"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8f/Google-gemini-icon.svg" alt="Google Gemini Logo" onerror="this.outerHTML = '<span class=\'img-alt-text\'>' + this.alt + '</span>'"></a>
-        <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" title="Google Maps"><img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Google_Maps_icon_%282020%29.svg" alt="Google Maps Logo" onerror="this.outerHTML = '<span class=\'img-alt-text\'>' + this.alt + '</span>'"></a>
+        <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" title="Google Maps"><img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Maps_icon_%282020%29.svg" alt="Google Maps Logo" onerror="this.outerHTML = '<span class=\'img-alt-text\'>' + this.alt + '</span>'"></a>
         <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" title="YouTube"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube Logo" onerror="this.outerHTML = '<span class=\'img-alt-text\'>' + this.alt + '</span>'"></a>
     </div>
+    -->
 
-    <script src="tao-data.js"></script>
     <script>
-        const nasaApiKey = 'NyyGoLiGKX7pg76t9ehi4L8n0MHQuHw8xV6QHLNm'; // Kept as per original file, though APOD not actively shown
         const rijksApiKey = 'LCaM9ZlM'; // Your Rijksmuseum API Key
-        let randomTaoChapterData = null;
 
         function activateView(viewElement, boxElement) {
             requestAnimationFrame(() => {
@@ -210,86 +205,31 @@
             });
         }
 
-        // --- APOD Functions (Original, kept for completeness if needed elsewhere) ---
-        async function fetchAPOD(boxElement) {
-            const boxId = boxElement.id;
-            const mediaView = boxElement.querySelector('.media-view');
-            const mediaContainer = mediaView.querySelector('.media-item-container');
-            const titleLink = mediaView.querySelector('.media-title a');
-
-            if (!mediaContainer || !titleLink ) {
-                mediaContainer.innerHTML = `<div class="media-error">Page Error: Display elements not found.</div>`;
-                activateView(mediaView, boxElement);
-                return;
-            }
-            mediaContainer.innerHTML = '<div class="media-loading">Loading APOD...</div>';
-            titleLink.textContent = 'Loading APOD title...';
-            titleLink.href = '#';
-            if (mediaView.classList.contains('active-internal-view')) {
-                 activateView(mediaView, boxElement);
-            }
-            let url = `https://api.nasa.gov/planetary/apod?api_key=${nasaApiKey}`;
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.msg || `HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                displayAPODContent(boxElement, data);
-            } catch (error) {
-                console.error("Error fetching APOD for " + boxId + ":", error);
-                mediaContainer.innerHTML = `<div class="media-error">Failed to load APOD: ${error.message}</div>`;
-                if (mediaView.classList.contains('active-internal-view')) {
-                    activateView(mediaView, boxElement);
-                }
-            }
-        }
-
-        function displayAPODContent(boxElement, data) {
-            const mediaView = boxElement.querySelector('.media-view');
-            const mediaContainer = mediaView.querySelector('.media-item-container');
-            const titleLink = mediaView.querySelector('.media-title a');
-            mediaContainer.innerHTML = '';
-            const updateHeights = () => {
-                if (mediaView.classList.contains('active-internal-view')) {
-                    activateView(mediaView, boxElement);
-                }
-            };
-            if (data.media_type === 'image') {
-                const img = document.createElement('img');
-                img.src = data.url;
-                img.alt = data.title;
-                img.onload = updateHeights;
-                img.onerror = () => {
-                    mediaContainer.innerHTML = `<div class="media-error">APOD Image failed to load.</div>`;
-                    updateHeights();
-                };
-                mediaContainer.appendChild(img);
-            } else if (data.media_type === 'video') {
-                const iframe = document.createElement('iframe');
-                iframe.src = data.url;
-                iframe.title = data.title;
-                iframe.allowFullscreen = true;
-                iframe.onload = updateHeights;
-                mediaContainer.appendChild(iframe);
-                setTimeout(updateHeights, 100);
-            } else {
-                mediaContainer.textContent = 'Unsupported APOD media type: ' + data.media_type;
-                updateHeights();
-            }
-            titleLink.textContent = data.title || "Untitled APOD";
-            if (data.date) {
-                const dateParts = data.date.split('-');
-                const apodPageDate = dateParts[0].substring(2) + dateParts[1] + dateParts[2];
-                titleLink.href = `https://apod.nasa.gov/apod/ap${apodPageDate}.html`;
-            } else {
-                titleLink.href = data.hdurl || data.url || '#';
-            }
-            if(data.media_type !== 'image'){ updateHeights(); }
-        }
+        // --- API Integration & Art Fetching ---
+        // The following sections handle fetching data from different museum APIs.
+        // Each museum has a different way of providing data, so they have their own dedicated functions.
+        // The general structure is:
+        // 1. A "fetch" function that communicates with the API to get artwork data.
+        // 2. A "display" function that takes that data and puts it on the page.
 
         // --- Rijksmuseum Functions (for Box 1) ---
+        /**
+         * Fetches a random artwork from the Rijksmuseum's collection.
+         * The Rijksmuseum API has a large collection but limits direct access to the first 10,000 items.
+         * This function works around that by:
+         * 1. First, checking the total number of available artworks with images.
+         * 2. Calculating a random page number within the accessible limit (10,000 items).
+         * 3. Fetching that random page of artworks.
+         * 4. Picking one random artwork from that page's results.
+         * 5. Fetching the full details for that single artwork to display it.
+         *
+         * Key API Parameters Used:
+         * - key: Your personal API key (stored in the `rijksApiKey` variable).
+         * - format: 'json' - We request the data in JSON format, which is easy to use in JavaScript.
+         * - imgonly: 'true' - Filters for artworks that have an image available.
+         * - ps: 'results per page' - How many items to return in one list (max 100).
+         * - p: 'page number' - Which page of results to retrieve.
+         */
         async function fetchRijksmuseumArt(boxElement) {
             const boxId = boxElement.id;
             const mediaView = boxElement.querySelector('.media-view');
@@ -309,20 +249,49 @@
             if (mediaView.classList.contains('active-internal-view')) {
                 activateView(mediaView, boxElement);
             }
-            const collectionUrl = `https://www.rijksmuseum.nl/api/en/collection?key=${rijksApiKey}&format=json&imgonly=true&toppieces=true&ps=100`;
+
+            const resultsPerPage = 100; // Max results per page from the API
+            const baseUrl = `https://www.rijksmuseum.nl/api/en/collection?key=${rijksApiKey}&format=json&imgonly=true`;
+            const maxAccessibleItems = 10000; // Rijksmuseum API pagination limit
+
             try {
+                // First, find out the total number of artworks with images available.
+                const countUrl = `${baseUrl}&ps=1`;
+                const responseCount = await fetch(countUrl);
+                if (!responseCount.ok) throw new Error(`Rijksmuseum API (count) error! status: ${responseCount.status}`);
+                const dataCount = await responseCount.json();
+                const totalArtworks = dataCount.count;
+                if (!totalArtworks || totalArtworks === 0) {
+                    throw new Error('No art objects with images found in Rijksmuseum collection.');
+                }
+
+                // The API limits pagination to the first 10,000 results.
+                // We'll pick a random item from this accessible pool.
+                const accessibleArtworks = Math.min(totalArtworks, maxAccessibleItems);
+                const totalPages = Math.ceil(accessibleArtworks / resultsPerPage);
+
+                // Calculate a random page number to fetch (API pages are 0-indexed).
+                const randomPage = Math.floor(Math.random() * totalPages);
+
+                // Fetch the list of artworks from that random page.
+                const collectionUrl = `${baseUrl}&p=${randomPage}&ps=${resultsPerPage}`;
                 const responseCollection = await fetch(collectionUrl);
                 if (!responseCollection.ok) throw new Error(`Rijksmuseum API (collection) error! status: ${responseCollection.status}`);
                 const dataCollection = await responseCollection.json();
-                if (!dataCollection.artObjects || dataCollection.artObjects.length === 0) throw new Error('No art objects found in Rijksmuseum top pieces.');
+                if (!dataCollection.artObjects || dataCollection.artObjects.length === 0) throw new Error('No art objects found on the randomly selected page. This can happen near the API pagination limit.');
+                
+                // Pick a random artwork from the results of that page.
                 const randomIndex = Math.floor(Math.random() * dataCollection.artObjects.length);
                 const randomArtObjectSummary = dataCollection.artObjects[randomIndex];
                 const objectNumber = randomArtObjectSummary.objectNumber;
+
+                // Fetch the detailed information for the chosen artwork.
                 const detailUrl = `https://www.rijksmuseum.nl/api/en/collection/${objectNumber}?key=${rijksApiKey}&format=json`;
                 const responseDetail = await fetch(detailUrl);
                 if (!responseDetail.ok) throw new Error(`Rijksmuseum API (detail for ${objectNumber}) error! status: ${responseDetail.status}`);
                 const dataDetail = await responseDetail.json();
                 if (!dataDetail.artObject) throw new Error('Could not retrieve art object details from Rijksmuseum.');
+                
                 displayRijksmuseumArt(boxElement, dataDetail.artObject);
             } catch (error) {
                 console.error("Error fetching Rijksmuseum art for " + boxId + ":", error);
@@ -393,12 +362,25 @@
             if (!imageUrlForDisplay) updateHeights();
         }
 
-        // --- Wikimedia POTD Functions (Original, kept for completeness) ---
-        async function fetchWikimediaPOTD(boxElement) { /* ... content from original file ... */ }
-        function displayWikimediaPOTDContent(boxElement, pageData, globalUsageArray) { /* ... content from original file ... */ }
-
-
         // --- Metropolitan Museum of Art Functions (for Box 2) ---
+        /**
+         * Fetches a random artwork from the Metropolitan Museum of Art's collection.
+         * This API is simpler and does not require an API key.
+         * This function works by:
+         * 1. Searching for highlighted artworks that are supposed to have images.
+         * 2. This search returns a list of IDs for all matching artworks.
+         * 3. It then picks a random ID from the list and fetches the full details for that artwork.
+         * 4. IMPORTANT: Sometimes an artwork marked as having an image doesn't have a usable one.
+         *    To handle this, the function will "retry" up to 10 times with a new random ID until
+         *    it finds an artwork that has a valid image URL.
+         *
+         * Key API Parameters Used:
+         * - isHighlight: 'true' - Narrows the search to only include major works in the collection. Can be set to 'false' for a wider selection.
+         * - hasImages: 'true' - Filters for artworks that are flagged as having an image. This should be kept 'true'.
+         * - q: 'a' - A very broad search query ('a' appears in most titles/descriptions) to get a large
+         *   and varied list of artworks. You could change this to something more specific,
+         *   like 'q=sunflowers' to get art related to sunflowers, or 'q=monet' to search for a specific artist.
+         */
         async function fetchMetArt(boxElement) {
             const boxId = boxElement.id;
             const mediaView = boxElement.querySelector('.media-view');
@@ -424,14 +406,39 @@
                 if (!responseSearch.ok) throw new Error(`Met API (search) error! status: ${responseSearch.status}`);
                 const dataSearch = await responseSearch.json();
                 if (!dataSearch.objectIDs || dataSearch.objectIDs.length === 0) throw new Error('No art objects found from Met API search.');
-                const randomIndex = Math.floor(Math.random() * dataSearch.objectIDs.length);
-                const randomObjectID = dataSearch.objectIDs[randomIndex];
-                const detailUrl = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${randomObjectID}`;
-                const responseDetail = await fetch(detailUrl);
-                if (!responseDetail.ok) throw new Error(`Met API (detail for ${randomObjectID}) error! status: ${responseDetail.status}`);
-                const artData = await responseDetail.json();
-                if (!artData) throw new Error('Could not retrieve art object details from Met API.');
-                displayMetArt(boxElement, artData);
+                
+                let artDataWithImage = null;
+                const maxRetries = 10; // Number of times to try finding an artwork with an image.
+
+                for (let i = 0; i < maxRetries; i++) {
+                    const randomIndex = Math.floor(Math.random() * dataSearch.objectIDs.length);
+                    const randomObjectID = dataSearch.objectIDs[randomIndex];
+                    const detailUrl = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${randomObjectID}`;
+                    
+                    try {
+                        const responseDetail = await fetch(detailUrl);
+                        if (!responseDetail.ok) {
+                            console.warn(`Met API detail fetch for ${randomObjectID} failed. Retrying...`);
+                            continue; // Skip to next iteration of the loop.
+                        }
+                        
+                        const artData = await responseDetail.json();
+                        // Check if the artwork has a primary image URL.
+                        if (artData && artData.primaryImage && artData.primaryImage.length > 0) {
+                            artDataWithImage = artData;
+                            break; // Successfully found an artwork with an image, so exit the loop.
+                        }
+                    } catch (fetchError) {
+                        console.warn(`Network error fetching Met object ${randomObjectID}:`, fetchError, 'Retrying...');
+                    }
+                }
+
+                if (artDataWithImage) {
+                    displayMetArt(boxElement, artDataWithImage);
+                } else {
+                    // If no artwork with an image was found after all retries, throw an error.
+                    throw new Error(`Failed to find an artwork with an image after ${maxRetries} attempts.`);
+                }
             } catch (error) {
                 console.error("Error fetching Metropolitan Museum art for " + boxId + ":", error);
                 mediaContainer.innerHTML = `<div class="media-error">Failed to load Met art: ${error.message}</div>`;
@@ -526,46 +533,30 @@
             const box = event.currentTarget;
             const mediaView = box.querySelector('.media-view');
             const placeholderView = box.querySelector('.placeholder-content-view');
-            const clickedOnTitleLink = event.target.closest('.media-title a');
 
-            if (clickedOnTitleLink) {
-                // Allow link navigation
+            // If a link was clicked, let the browser handle it and don't toggle the view.
+            if (event.target.closest('a')) {
                 return;
             }
 
-            const isPlaceholderActive = placeholderView.classList.contains('active-internal-view');
-            const clickedOnMediaItem = event.target.closest('.media-item-container img, .media-item-container iframe');
-            const clickedOnPlaceholderContent = isPlaceholderActive && placeholderView.contains(event.target) && !event.target.closest('a'); // Don't toggle if clicking a link in placeholder
+            // Clicks inside a cross-origin iframe won't be detected here, which is expected.
 
-            if (clickedOnPlaceholderContent || (!isPlaceholderActive && clickedOnMediaItem)) {
-                box.classList.add('content-shown');
-                if (isPlaceholderActive) {
-                    placeholderView.classList.remove('active-internal-view');
-                    placeholderView.style.maxHeight = '0px';
-                    mediaView.classList.add('active-internal-view');
-                    activateView(mediaView, box);
-                } else {
+            const isPlaceholderActive = placeholderView.classList.contains('active-internal-view');
+
+            if (isPlaceholderActive) {
+                // If the widget/placeholder is visible, any click on the box (that's not a link)
+                // should switch back to the image view.
+                placeholderView.classList.remove('active-internal-view');
+                placeholderView.style.maxHeight = '0px';
+                mediaView.classList.add('active-internal-view');
+                activateView(mediaView, box);
+            } else {
+                // If the image view is visible, only a click on the image itself should
+                // switch to the placeholder view.
+                const clickedOnMediaItem = event.target.closest('.media-item-container img, .media-item-container iframe');
+                if (clickedOnMediaItem) {
                     mediaView.classList.remove('active-internal-view');
                     mediaView.style.maxHeight = '0px';
-                    if (randomTaoChapterData) {
-                        if (box.id === 'box1') {
-                            const titleEl = placeholderView.querySelector('#box1-tao-chapter-title');
-                            const textEl = placeholderView.querySelector('#box1-tao-text');
-                            if (titleEl) titleEl.textContent = `Tao Te Ching ${randomTaoChapterData.chapter}`;
-                            if (textEl) textEl.textContent = randomTaoChapterData.text;
-                        } else if (box.id === 'box2') {
-                            const titleEl = placeholderView.querySelector('#box2-tao-placeholder-title'); // Ensure this ID exists if you change title
-                            const annotationEl = placeholderView.querySelector('#box2-tao-annotation');
-                            const lifeLessonEl = placeholderView.querySelector('#box2-tao-lifelesson');
-                            if(titleEl && randomTaoChapterData.chapter) titleEl.textContent = ``;
-                            else if(titleEl) titleEl.textContent = "Wisdom from the Tao";
-
-                            if (annotationEl) annotationEl.textContent = randomTaoChapterData.annotation;
-                            if (lifeLessonEl) lifeLessonEl.textContent = randomTaoChapterData.lifeLesson;
-                        }
-                    } else {
-                         placeholderView.innerHTML = '<h2>Error</h2><p>Tao Te Ching data not loaded.</p>';
-                    }
                     placeholderView.classList.add('active-internal-view');
                     activateView(placeholderView, box);
                 }
@@ -573,13 +564,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            if (typeof taoTeChingData !== 'undefined' && taoTeChingData.length > 0) {
-                const randomIndex = Math.floor(Math.random() * taoTeChingData.length);
-                randomTaoChapterData = taoTeChingData[randomIndex];
-            } else {
-                console.error("taoTeChingData is not available or empty. Make sure tao-data.js is loaded and populated correctly.");
-            }
-
             const box1 = document.getElementById('box1');
             const box1MediaView = box1.querySelector('.media-view');
             box1.classList.add('content-shown');
